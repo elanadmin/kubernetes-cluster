@@ -3,7 +3,7 @@
 
 servers = [
     {
-        :name => "k8s-head",
+        :name => "k8s-master",
         :type => "master",
         :box => "ubuntu/xenial64",
         :box_version => "20180831.0.0",
