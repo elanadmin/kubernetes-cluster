@@ -68,10 +68,16 @@ EOF
     sudo sed -i "/^[^#]*KUBELET_EXTRA_ARGS=/c\KUBELET_EXTRA_ARGS=--node-ip=$IP_ADDR" /etc/default/kubelet
     sudo systemctl restart kubelet
     sudo --user=vagrant touch /home/vagrant/.Xauthority
+
+    # required for setting up password less ssh between guest VMs
+    sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
+    sudo service sshd restart
+
+
 SCRIPT
 
 $configureMaster = <<-SCRIPT
-    echo "This is master"
+    echo -e "\nThis is master:\n"
     # ip of this box
     IP_ADDR=`ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:`
 
@@ -86,20 +92,15 @@ $configureMaster = <<-SCRIPT
 
     # install Calico pod network addon
     export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl apply -f https://raw.githubusercontent.com/elanadmin/kubernetes-cluster/master/calico/rbac-kdd.yaml
     kubectl apply -f https://raw.githubusercontent.com/elanadmin/kubernetes-cluster/master/calico/calico.yaml
 
     kubeadm token create --print-join-command >> /etc/kubeadm_join_cmd.sh
     chmod +x /etc/kubeadm_join_cmd.sh
 
-    # required for setting up password less ssh between guest VMs
-    sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
-    sudo service sshd restart
-
 SCRIPT
 
 $configureNode = <<-SCRIPT
-    echo "This is worker"
+    echo -e "\nThis is worker:\n"
     apt-get install -y sshpass
     sshpass -p "vagrant" scp -o StrictHostKeyChecking=no vagrant@192.168.205.10:/etc/kubeadm_join_cmd.sh .
     sh ./kubeadm_join_cmd.sh
@@ -114,7 +115,8 @@ Vagrant.configure("2") do |config|
             config.vm.box_version = opts[:box_version]
             config.vm.hostname = opts[:name]
             config.vm.network :private_network, ip: opts[:eth1]
-
+            config.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
+            config.vm.network :forwarded_port, guest: 22, host: 2200, auto_correct: true
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
@@ -125,7 +127,7 @@ Vagrant.configure("2") do |config|
             end
 
             # we cannot use this because we can't install the docker version we want - https://github.com/hashicorp/vagrant/issues/4871
-            #config.vm.provision "docker"
+            # config.vm.provision "docker"
 
             config.vm.provision "shell", inline: $configureBox
 
