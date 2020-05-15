@@ -65,6 +65,10 @@ EOF
     IP_ADDR=`ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:`
     # set node-ip
     sudo wget https://raw.githubusercontent.com/elanadmin/kubernetes-cluster/master/config/kubelet -O /etc/default/kubelet
+    if [ -f "/bin/systemd" ];then
+      sudo wget https://raw.githubusercontent.com/elanadmin/kubernetes-cluster/master/config/daemon.json -O /etc/docker/daemon.json
+      sudo systemctl restart docker
+    fi
     sudo sed -i "/^[^#]*KUBELET_EXTRA_ARGS=/c\KUBELET_EXTRA_ARGS=--node-ip=$IP_ADDR" /etc/default/kubelet
     sudo systemctl restart kubelet
     sudo --user=vagrant touch /home/vagrant/.Xauthority
