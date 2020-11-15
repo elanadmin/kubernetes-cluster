@@ -25,6 +25,8 @@ servers = [
         :type => "node",
         :box => "ubuntu/xenial64",
         :box_version => "20180831.0.0",
+        :k8s_version => "1.15.0-00",
+        :k8s_release => "stable-1.15",
         :eth1 => "192.168.205.13",
         :mem => "2048",
         :cpu => "2"
@@ -32,7 +34,9 @@ servers = [
 ]
  ```
 
-As you can see above, you can also configure IP address, memory and CPU in the servers array. 
+As you can see above, you can also configure IP address, memory, CPU and K8's Release and Version in the servers array. 
+
+The Current Configuration installs K8's version v1.15.0-00, and it can be changed accordingly.  
 
 ## Clean-up
 
