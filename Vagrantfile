@@ -122,9 +122,9 @@ $configureMaster = <<-SCRIPT
       sudo cp -rp linux-amd64/helm /usr/sbin/
       echo export HELM_HOME="$HOME/.helm" >> $HOME/.bash_profile
       export HELM_HOME="$HOME/.helm"
-      helm init | tee -a ~/helmet.init
       kubectl create serviceaccount --namespace kube-system tiller 2> /dev/null
       kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller 2>/dev/null
+      helm init --stable-repo-url https://charts.helm.sh/stable --service-account tiller | tee -a ~/helmet.init
       kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}' 2>/dev/null
     fi
 
@@ -155,7 +155,7 @@ Vagrant.configure("2") do |config|
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
-            	 v.customize ["modifyvm", :id, "--groups", "/Ballerina Development"]
+            	 v.customize ["modifyvm", :id, "--groups", "/ELAN Development"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
 
