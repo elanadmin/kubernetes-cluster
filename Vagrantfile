@@ -118,7 +118,7 @@ $configureMaster = <<-SCRIPT
     if [ ! -f /usr/sbin/helm ];then
       wget https://kubernetes-helm.storage.googleapis.com/helm-v2.8.2-linux-amd64.tar.gz
       wget https://git.io/get_helm.sh -O get_helm.sh
-      tar -zxvf helm-v2.8.2-linux-amd64.tar.gz
+      tar -zxvf helm-v2.9.0-linux-amd64.tar.gz
       sudo cp -rp linux-amd64/helm /usr/sbin/
       echo export HELM_HOME="$HOME/.helm" >> $HOME/.bash_profile
       export HELM_HOME="$HOME/.helm"
