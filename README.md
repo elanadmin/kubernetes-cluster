@@ -3,10 +3,31 @@ A vagrant script for setting up a Kubernetes cluster using Kubeadm
 
 ## Pre-requisites
 
- * **[Vagrant 2.1.4+](https://www.vagrantup.com)**
- * **[Virtualbox 5.2.18+](https://www.virtualbox.org)**
+ * **[Vagrant 2.3.4+](https://developer.hashicorp.com/vagrant/downloads)**
+ * **[Virtualbox 7.0.6+](https://www.virtualbox.org)**
 
 ## How to Run
+
+#Windows, VirtualBox, and Hyper-V
+If you encounter an issue with Windows, you will get a blue screen if you attempt to bring up a VirtualBox VM with Hyper-V enabled.
+
+If you wish to use VirtualBox on Windows, you must ensure that Hyper-V is not enabled on Windows. You can turn off the feature with the following Powershell command for Windows 10.
+
+```
+Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+```
+
+For Windows 11, you can use an elevated Powershell.
+
+```
+bcdedit /set hypervisorlaunchtype off
+```
+
+You can also disable Hyper-V in the Windows system settings.
+
+Right click on the Windows button and select ‘Apps and Features’.
+Select Turn Windows Features on or off.
+Unselect Hyper-V and click OK.
 
 Execute the following vagrant command to start a new Kubernetes cluster, this will start one master and two nodes:
 
